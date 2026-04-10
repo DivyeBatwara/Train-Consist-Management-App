@@ -1,57 +1,62 @@
 import org.junit.jupiter.api.Test;
-import java.util.regex.Pattern;
+import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TrainConsistManagementAppTest {
 
-    Pattern trainPattern = Pattern.compile("TRN-\\d{4}");
-    Pattern cargoPattern = Pattern.compile("PET-[A-Z]{2}");
-
-    @Test
-    void testRegex_ValidTrainID() {
-        assertTrue(trainPattern.matcher("TRN-1234").matches());
+    private boolean isSafe(List<Bogie> bogies) {
+        return bogies.stream()
+                .allMatch(b ->
+                        !b.getType().equalsIgnoreCase("Cylindrical") ||
+                                b.getCargo().equalsIgnoreCase("Petroleum")
+                );
     }
 
     @Test
-    void testRegex_InvalidTrainIDFormat() {
-        assertFalse(trainPattern.matcher("TRAIN12").matches());
-        assertFalse(trainPattern.matcher("TRN12A").matches());
-        assertFalse(trainPattern.matcher("1234-TRN").matches());
+    void testSafety_AllBogiesValid() {
+        List<Bogie> bogies = Arrays.asList(
+                new Bogie("Cylindrical", "Petroleum"),
+                new Bogie("Rectangular", "Coal"),
+                new Bogie("Cylindrical", "Petroleum")
+        );
+
+        assertTrue(isSafe(bogies));
     }
 
     @Test
-    void testRegex_ValidCargoCode() {
-        assertTrue(cargoPattern.matcher("PET-AB").matches());
+    void testSafety_CylindricalWithInvalidCargo() {
+        List<Bogie> bogies = Arrays.asList(
+                new Bogie("Cylindrical", "Coal")
+        );
+
+        assertFalse(isSafe(bogies));
     }
 
     @Test
-    void testRegex_InvalidCargoCodeFormat() {
-        assertFalse(cargoPattern.matcher("PET-ab").matches());
-        assertFalse(cargoPattern.matcher("PET123").matches());
-        assertFalse(cargoPattern.matcher("AB-PET").matches());
+    void testSafety_NonCylindricalBogiesAllowed() {
+        List<Bogie> bogies = Arrays.asList(
+                new Bogie("Open", "Coal"),
+                new Bogie("Box", "Grain")
+        );
+
+        assertTrue(isSafe(bogies));
     }
 
     @Test
-    void testRegex_TrainIDDigitLengthValidation() {
-        assertFalse(trainPattern.matcher("TRN-123").matches());
-        assertFalse(trainPattern.matcher("TRN-12345").matches());
+    void testSafety_MixedBogiesWithViolation() {
+        List<Bogie> bogies = Arrays.asList(
+                new Bogie("Cylindrical", "Petroleum"),
+                new Bogie("Open", "Coal"),
+                new Bogie("Cylindrical", "Coal")
+        );
+
+        assertFalse(isSafe(bogies));
     }
 
     @Test
-    void testRegex_CargoCodeUppercaseValidation() {
-        assertFalse(cargoPattern.matcher("PET-Ab").matches());
-        assertFalse(cargoPattern.matcher("PET-aB").matches());
-    }
+    void testSafety_EmptyBogieList() {
+        List<Bogie> bogies = new ArrayList<>();
 
-    @Test
-    void testRegex_EmptyInputHandling() {
-        assertFalse(trainPattern.matcher("").matches());
-        assertFalse(cargoPattern.matcher("").matches());
-    }
-
-    @Test
-    void testRegex_ExactPatternMatch() {
-        assertFalse(trainPattern.matcher("TRN-1234-EXTRA").matches());
-        assertFalse(cargoPattern.matcher("PET-AB123").matches());
+        assertTrue(isSafe(bogies));
     }
 }
