@@ -4,49 +4,41 @@ import static org.junit.jupiter.api.Assertions.*;
 class TrainConsistManagementAppTest {
 
     @Test
-    void testException_ValidCapacityCreation() throws InvalidCapacityException {
-        Bogie b = new Bogie("Sleeper", "Passenger", 72);
-        assertNotNull(b);
+    void testCargo_SafeAssignment() {
+        GoodsBogie b = new GoodsBogie("Cylindrical");
+        b.assignCargo("Petroleum");
+        assertEquals("Petroleum", b.cargo);
     }
 
     @Test
-    void testException_NegativeCapacityThrowsException() {
-        Exception ex = assertThrows(InvalidCapacityException.class, () -> {
-            new Bogie("Sleeper", "Passenger", -10);
-        });
-        assertEquals("Invalid capacity for passenger bogie", ex.getMessage());
+    void testCargo_UnsafeAssignmentHandled() {
+        GoodsBogie b = new GoodsBogie("Rectangular");
+        assertDoesNotThrow(() -> b.assignCargo("Petroleum"));
     }
 
     @Test
-    void testException_ZeroCapacityThrowsException() {
-        Exception ex = assertThrows(InvalidCapacityException.class, () -> {
-            new Bogie("Sleeper", "Passenger", 0);
-        });
-        assertEquals("Invalid capacity for passenger bogie", ex.getMessage());
+    void testCargo_CargoNotAssignedAfterFailure() {
+        GoodsBogie b = new GoodsBogie("Rectangular");
+        b.assignCargo("Petroleum");
+        assertNull(b.cargo);
     }
 
     @Test
-    void testException_ExceptionMessageValidation() {
-        Exception ex = assertThrows(InvalidCapacityException.class, () -> {
-            new Bogie("AC Chair", "Passenger", 0);
-        });
-        assertEquals("Invalid capacity for passenger bogie", ex.getMessage());
-    }
+    void testCargo_ProgramContinuesAfterException() {
+        GoodsBogie b1 = new GoodsBogie("Rectangular");
+        GoodsBogie b2 = new GoodsBogie("Cylindrical");
 
-    @Test
-    void testException_ObjectIntegrityAfterCreation() throws InvalidCapacityException {
-        Bogie b = new Bogie("First Class", "Passenger", 30);
-        assertEquals("First Class", b.name);
-        assertEquals("Passenger", b.type);
-        assertEquals(30, b.getCapacity());
-    }
-
-    @Test
-    void testException_MultipleValidBogiesCreation() {
         assertDoesNotThrow(() -> {
-            new Bogie("Sleeper", "Passenger", 72);
-            new Bogie("AC Chair", "Passenger", 50);
-            new Bogie("First Class", "Passenger", 30);
+            b1.assignCargo("Petroleum");
+            b2.assignCargo("Petroleum");
         });
+
+        assertEquals("Petroleum", b2.cargo);
+    }
+
+    @Test
+    void testCargo_FinallyBlockExecution() {
+        GoodsBogie b = new GoodsBogie("Rectangular");
+        assertDoesNotThrow(() -> b.assignCargo("Petroleum"));
     }
 }
