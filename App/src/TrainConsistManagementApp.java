@@ -1,25 +1,36 @@
+import java.util.Arrays;
 public class TrainConsistManagementApp {
 
-    public static boolean linearSearch(String[] bogieIds, String key) {
-        for (String id : bogieIds) {
-            if (id.equals(key)) {
-                return true; // found
+    public static boolean binarySearch(String[] bogieIds, String key) {
+        Arrays.sort(bogieIds);
+        int low = 0;
+        int high = bogieIds.length - 1;
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+
+            int cmp = bogieIds[mid].compareTo(key);
+
+            if (cmp == 0) {
+                return true;
+            } else if (cmp < 0) {
+                low = mid + 1;
+            } else {
+                high = mid - 1;
             }
         }
         return false; // not found
     }
 
     public static void main(String[] args) {
-        String[] bogieIds = {"B101", "B205", "B309", "B412", "B523"};
+        String[] bogieIds = {"BG101","BG205","BG309","BG412","BG550"}; // MUST be sorted
 
-        String searchKey = "B309";
+        String key = "BG309";
 
-        boolean found = linearSearch(bogieIds, searchKey);
-
-        if (found) {
-            System.out.println("Bogie found: " + searchKey);
+        if (binarySearch(bogieIds, key)) {
+            System.out.println("Bogie found: " + key);
         } else {
-            System.out.println("Bogie not found: " + searchKey);
+            System.out.println("Bogie not found: " + key);
         }
     }
 }
