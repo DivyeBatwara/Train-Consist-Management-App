@@ -1,23 +1,19 @@
+import java.util.Arrays;
+
 public class TrainConsistManagementApp {
     public static void main(String[] args) {
 
-        int[] capacities = {72, 50, 30, 90, 60};
+        String[] bogieNames = {
+                "Sleeper",
+                "AC Chair",
+                "First Class",
+                "Cylindrical",
+                "Rectangular"
+        };
 
-        int n = capacities.length;
+        Arrays.sort(bogieNames);
 
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-                if (capacities[j] > capacities[j + 1]) {
-                    int temp = capacities[j];
-                    capacities[j] = capacities[j + 1];
-                    capacities[j + 1] = temp;
-                }
-            }
-        }
-
-        System.out.println("Sorted Capacities:");
-        for (int c : capacities) {
-            System.out.print(c + " ");
-        }
+        System.out.println("Sorted Bogie Names:");
+        System.out.println(Arrays.toString(bogieNames));
     }
 }
