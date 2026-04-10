@@ -1,21 +1,15 @@
 import java.util.*;
-import java.util.stream.*;
+import java.util.stream.Collectors;
 
 class Bogie {
-    private String type;
-    private String cargo;
+    private int capacity;
 
-    public Bogie(String type, String cargo) {
-        this.type = type;
-        this.cargo = cargo;
+    public Bogie(int capacity) {
+        this.capacity = capacity;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public String getCargo() {
-        return cargo;
+    public int getCapacity() {
+        return capacity;
     }
 }
 
@@ -23,22 +17,33 @@ public class TrainConsistManagementApp {
 
     public static void main(String[] args) {
 
-        List<Bogie> bogies = Arrays.asList(
-                new Bogie("Cylindrical", "Petroleum"),
-                new Bogie("Rectangular", "Coal"),
-                new Bogie("Cylindrical", "Petroleum")
-        );
-
-        boolean isSafe = bogies.stream()
-                .allMatch(b ->
-                        !b.getType().equalsIgnoreCase("Cylindrical") ||
-                                b.getCargo().equalsIgnoreCase("Petroleum")
-                );
-
-        if (isSafe) {
-            System.out.println("Train is Safety Compliant");
-        } else {
-            System.out.println("Train is NOT Safety Compliant");
+        List<Bogie> bogies = new ArrayList<>();
+        for (int i = 1; i <= 100000; i++) {
+            bogies.add(new Bogie(i));
         }
+
+        long startLoop = System.nanoTime();
+
+        List<Bogie> loopResult = new ArrayList<>();
+        for (Bogie b : bogies) {
+            if (b.getCapacity() % 2 == 0) {
+                loopResult.add(b);
+            }
+        }
+
+        long endLoop = System.nanoTime();
+        long loopTime = endLoop - startLoop;
+
+        long startStream = System.nanoTime();
+
+        List<Bogie> streamResult = bogies.stream()
+                .filter(b -> b.getCapacity() % 2 == 0)
+                .collect(Collectors.toList());
+
+        long endStream = System.nanoTime();
+        long streamTime = endStream - startStream;
+
+        System.out.println("Loop Time   : " + loopTime + " ns");
+        System.out.println("Stream Time : " + streamTime + " ns");
     }
 }
