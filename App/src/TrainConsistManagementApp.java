@@ -2,34 +2,46 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 class Bogie {
+    String name;
     String type;
-    int capacity;
 
-    Bogie(String type, int capacity) {
+    public Bogie(String name, String type) {
+        this.name = name;
         this.type = type;
-        this.capacity = capacity;
     }
 
-    void display() {
-        System.out.println("Type: " + type + ", Capacity: " + capacity);
+    public String getName() {
+        return name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }
 
-public class TrainConsistManagementApp{
-
+public class TrainConsistManagementApp {
     public static void main(String[] args) {
 
-        List<Bogie> bogies = new ArrayList<>();
-        bogies.add(new Bogie("Sleeper", 50));
-        bogies.add(new Bogie("AC Chair", 70));
-        bogies.add(new Bogie("First Class", 80));
-        bogies.add(new Bogie("Sleeper", 60));
+        List<Bogie> bogies = Arrays.asList(
+                new Bogie("Sleeper", "Passenger"),
+                new Bogie("AC Chair", "Passenger"),
+                new Bogie("First Class", "Passenger"),
+                new Bogie("Rectangular", "Goods"),
+                new Bogie("Cylindrical", "Goods")
+        );
 
-        List<Bogie> filteredBogies = bogies.stream()
-                .filter(b -> b.capacity > 60)
-                .collect(Collectors.toList());
+        Map<String, List<Bogie>> groupedBogies =
+                bogies.stream()
+                        .collect(Collectors.groupingBy(Bogie::getType));
 
-        System.out.println("Filtered Bogies (Capacity > 60):");
-        filteredBogies.forEach(Bogie::display);
+        System.out.println("Grouped Bogies:");
+        for (Map.Entry<String, List<Bogie>> entry : groupedBogies.entrySet()) {
+            System.out.println(entry.getKey() + " -> " + entry.getValue());
+        }
     }
 }
